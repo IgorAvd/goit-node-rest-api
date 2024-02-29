@@ -4,7 +4,6 @@ import cors from "cors";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 dotenv.config();
-//XVQ7V0stgMIW50am
 
 import contactsRouter from "./routes/contactsRouter.js";
 
@@ -25,14 +24,9 @@ app.use((err, _, res, __) => {
   res.status(status).json({ message });
 });
 
-// app.listen(3000, () => {
-//   console.log("Server is running. Use our API on port: 3000");
-// });
-
 const { DB_HOST, PORT = 3000 } = process.env;
 mongoose
-  .connect(DB_HOST)
-  // .connect(DB_HOST, { dbName: "db-contacts" })
+  .connect(DB_HOST) 
   .then(() => {
     app.listen(PORT, function () {
       console.log("Database connection successful");
