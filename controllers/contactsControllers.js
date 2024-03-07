@@ -14,12 +14,8 @@ export const getAllContacts = async (req, res) => {
 };
 
 export const getOneContact = async (req, res) => {
-  const { id } = req.params;
-  const result = await Contact.findById(id, "-createdAt -updatedAt");
-  if (!result) {
-    throw HttpError(404, `Contacts with id=${id} not found`);
-  }
-  res.json(result);
+  const contact = req.contact;
+  res.json(contact);
 };
 
 export const createContact = async (req, res) => {
@@ -30,37 +26,37 @@ export const createContact = async (req, res) => {
 
 export const updateContactById = async (req, res) => {
   const { id } = req.params;
-  const result = await Contact.findByIdAndUpdate(id, req.body, {
-    new: true,
-  });
-  if (!result) {
-    throw HttpError(404, "Not found");
-  }
   if (Object.keys(req.body).length === 0) {
     throw HttpError(400, "Body must have at least one field");
   }
-  res.json(result);
+  const updatedContact = await Contact.findByIdAndUpdate(id, req.body, {
+    new: true,
+  });
+  if (!updatedContact) {
+    throw HttpError(404, "Not found");
+  }
+  res.json(updatedContact);
 };
 
 export const updateStatusContact = async (req, res) => {
   const { id } = req.params;
-  const result = await Contact.findByIdAndUpdate(id, req.body, {
-    new: true,
-  });
-  if (!result) {
-    throw HttpError(404, "Not found");
-  }
   if (Object.keys(req.body).length === 0) {
     throw HttpError(400, "Body must have at least one field");
   }
-  res.json(result);
+  const updatedContact = await Contact.findByIdAndUpdate(id, req.body, {
+    new: true,
+  });
+  if (!updatedContact) {
+    throw HttpError(404, "Not found");
+  }
+  res.json(updatedContact);
 };
 
 export const deleteContact = async (req, res) => {
   const { id } = req.params;
-  const result = await Contact.findByIdAndDelete(id);
-  if (!result) {
+  const removedContact = await Contact.findByIdAndDelete(id);
+  if (!removedContact) {
     throw HttpError(404, "Not found");
   }
-  res.json(result);
+  res.json(removedContact);
 };

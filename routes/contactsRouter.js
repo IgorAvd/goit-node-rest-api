@@ -16,12 +16,19 @@ import {
 } from "../models/contact.js";
 import { isValidId } from "../middlewares/isValidId.js";
 import { authenticate } from "../middlewares/authenticate.js";
+import { checkIsOwner } from "../middlewares/isOwner.js";
 
 const contactsRouter = express.Router();
 
 contactsRouter.get("/", authenticate, ctrlWrapper(getAllContacts));
 
-contactsRouter.get("/:id", authenticate, isValidId, ctrlWrapper(getOneContact));
+contactsRouter.get(
+  "/:id",
+  authenticate,
+  isValidId,
+  checkIsOwner,
+  ctrlWrapper(getOneContact)
+);
 
 contactsRouter.post(
   "/",
@@ -34,6 +41,7 @@ contactsRouter.put(
   "/:id",
   authenticate,
   isValidId,
+  checkIsOwner,
   validateBody(updatePutContactSchema),
   ctrlWrapper(updateContactById)
 );
@@ -42,6 +50,7 @@ contactsRouter.patch(
   "/:id/favorite",
   authenticate,
   isValidId,
+  checkIsOwner,
   validateBody(updatePatchContactSchema),
   ctrlWrapper(updateStatusContact)
 );
@@ -50,6 +59,7 @@ contactsRouter.delete(
   "/:id",
   authenticate,
   isValidId,
+  checkIsOwner,
   ctrlWrapper(deleteContact)
 );
 
