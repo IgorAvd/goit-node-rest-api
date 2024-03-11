@@ -17,6 +17,7 @@ import {
 import { isValidId } from "../middlewares/isValidId.js";
 import { authenticate } from "../middlewares/authenticate.js";
 import { checkIsOwner } from "../middlewares/isOwner.js";
+import { upload } from "../middlewares/upload.js";
 
 const contactsRouter = express.Router();
 
@@ -33,6 +34,7 @@ contactsRouter.get(
 contactsRouter.post(
   "/",
   authenticate,
+  upload.single("avatarURL"),
   validateBody(createContactSchema),
   ctrlWrapper(createContact)
 );

@@ -3,6 +3,13 @@ import { UserModel } from "../models/user.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import gravatar from "gravatar";
+import jimp from "jimp";
+import path from "path";
+import fs from "fs/promises";
+import { fileURLToPath } from "url";
+import { dirname } from "path";
+
 dotenv.config();
 
 const { SECRET_KEY } = process.env;
@@ -14,10 +21,12 @@ export const register = async (req, res) => {
     throw HttpError(409, "Email in use");
   }
   const hashPassword = await bcrypt.hash(password, 10);
+  const avatarURL = gravatar.url(email);
 
   const newUser = await UserModel.create({
     ...req.body,
     password: hashPassword,
+    avatarURL,
   });
   res.status(201).json({
     email: newUser.email,
@@ -81,4 +90,23 @@ export const updateSubscription = async (req, res) => {
     throw HttpError(404);
   }
   res.status(201).json({ email, subscription });
+};
+
+export const updateAvatar = async (req, res) => {
+  const { _id } = req.user;
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = dirname(__filename);
+  const AvatarDir = path.join(__dirname, "../", "public", "avatars");
+  const { path: tempUpload, originalname } = req.file;
+  const fileName = `${_id}_${originalname}`;
+  const resultUpload = path.join(AvatarDir, fileName);
+  const image = await jimp.read(tempUpload);
+  image.resize(250, 250).write(resultUpload);
+  await fs.unlink(tempUpload);
+  const avatarURL = path.join("avatars", fileName);
+  await UserModel.findByIdAndUpdate(_id, { avatarURL });
+
+  res.json({
+    avatarURL,
+  });
 };
