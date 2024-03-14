@@ -13,7 +13,7 @@ const multerConfig = multer.diskStorage({
     cb(null, file.originalname);
   },
 });
-// const bookDir = path.join(__dirname, "public", "avatars");
+
 export const upload = multer({
   storage: multerConfig,
 });

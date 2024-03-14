@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  emailSchema,
   loginSchema,
   registerSchema,
   updateSubscriptionSchema,
@@ -10,8 +11,10 @@ import {
   login,
   logout,
   register,
+  resendVerifyEmail,
   updateAvatar,
   updateSubscription,
+  verifyEmail,
 } from "../controllers/authControllers.js";
 import { validateBody } from "../middlewares/validateBody.js";
 import { authenticate } from "../middlewares/authenticate.js";
@@ -23,6 +26,14 @@ authRouter.post(
   "/register",
   validateBody(registerSchema),
   ctrlWrapper(register)
+);
+
+authRouter.get("/verify/:verificationToken", ctrlWrapper(verifyEmail));
+
+authRouter.post(
+  "/verify",
+  validateBody(emailSchema),
+  ctrlWrapper(resendVerifyEmail)
 );
 
 authRouter.post("/login", validateBody(loginSchema), ctrlWrapper(login));
@@ -42,7 +53,7 @@ authRouter.patch(
   "/avatars",
   authenticate,
   upload.single("avatar"),
-  updateAvatar
+  ctrlWrapper(updateAvatar)
 );
 
 export default authRouter;
